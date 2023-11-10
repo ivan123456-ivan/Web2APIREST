@@ -15,4 +15,15 @@ class ProductApiModel extends ApiModel
 
                     return $query->fetch(PDO::FETCH_OBJ);
           }
+
+          public function getAll()
+          {
+                    $query = $this->db->prepare("SELECT * FROM products");
+                    $query->execute();
+                    return $query->fetchAll(PDO::FETCH_OBJ);
+          }
+
+          public function insert()
+          {
+          }
 }

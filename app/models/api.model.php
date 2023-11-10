@@ -16,7 +16,6 @@ class ApiModel
     $query = $this->db->query('SHOW TABLES');
     $tables = $query->fetchAll(); // Nos devuelve todas las tablas de la db
     if (count($tables) == 0) {
-      // Si no hay crearlas
       $sql = <<<END
                 -- phpMyAdmin SQL Dump
                   -- version 5.2.0

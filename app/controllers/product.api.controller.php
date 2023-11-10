@@ -26,13 +26,25 @@ class ProductApiController extends ApiController
           }
 
           public function getAll()
-          { //nico
-
+          {
+                    $products = $this->model->getAll();
+                    $this->view->response($products, 200);
           }
 
           public function post()
           {
                     $body = $this->getData();
+                    foreach ($body as $elemento) {
+                              if (!isset($elemento) || empty($elemento)) {
+                                        $this->view->response("No se completaron todos los campos.", 404);
+                                        return;
+                              }
+                    }
 
+                    $name = $body->name;
+                    $price = $body->price;
+                    $stock = $body->stock;
+                    $product_description = $body->product_description;
+                    $id_categories = $body->id_categories;
           }
 }
