@@ -13,6 +13,6 @@ $router->addRoute('products/:ID', 'GET',    'ProductApiController', 'get');
 $router->addRoute('products', 'GET',    'ProductApiController', 'getAll');
 $router->addRoute('products', 'POST',    'ProductApiController', 'post');
 $router->addRoute('products/:ID', 'PUT',    'ProductApiController', 'update');
-$router->addRoute('products/', 'GET',    'ProductApiController', 'getProductsByOrder');
+$router->addRoute('products/:ID', 'DELETE', 'ProductApiController', 'delete');
 
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
