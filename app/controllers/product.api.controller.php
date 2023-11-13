@@ -35,10 +35,10 @@ class ProductApiController extends ApiController
     $limit = (!empty($_GET["limit"])) ? (int) $_GET["limit"] : 5;
     $sort_by = (!empty($_GET["sort_by"])) ? $_GET["sort_by"] : "";
     $order = (!empty($_GET["order"]) && $_GET["order"] == 1) ? "ASC" : "DESC";
-    $category = (!empty($_GET["category"]) && isset($_GET["category"]) && $this->categoryModel->getCategory($_GET["category"])) ? (int)$_GET["category"] : 0;
+    $category = (!empty($_GET["category"]) && isset($_GET["category"])) ? (int)$_GET["category"] : 0;
     $offset = ($page !== -1) ? $page * $limit : -1;
 
-    if ($sort_by == "" && !$category) {
+    if ($sort_by == "" && !$category) { // ni ordenar ni filtrar
       if ($offset !== -1) { // verifico que se haya establecido un offset
         if (!is_integer($page) || !is_integer($limit)) {
           $this->view->response("Error en especificaciones de parámetros.", 404);
@@ -50,11 +50,19 @@ class ProductApiController extends ApiController
         $products = $this->model->getAll();
         $this->view->response($products, 200);
       }
-    } else if ($sort_by !== "" && $category) {
-      $this->getAllByCategoryAndOrder($sort_by, $order, $category);
-    } else if ($sort_by == "" && $category) {
-      $this->getAllByCategory($category);
-    } else if ($sort_by !== "" && !$category) {
+    } else if ($sort_by !== "" && $category) { // ordenar && filtrar
+      if ($order == "ASC" || $order == "DESC") {
+        $this->getAllByCategoryAndOrder($sort_by, $order, $category);
+      } else {
+        $this->view->response("No se puede ordenar correctamente.", 404);
+      }
+    } else if ($sort_by == "" && $category) { // solo filtrar
+      if ($this->categoryModel->getCategory($_GET["category"])) { // si encuentra la categoría en la DB filtra
+        $this->getAllByCategory($category);
+      } else {
+        $this->view->response("No se pudo encontrar una categoría con el ID = " . $_GET["category"] . ".", 404);
+      }
+    } else if ($sort_by !== "" && !$category) { // solo ordenar
       $this->getAllByOrder($sort_by, $order);
     }
   }
@@ -110,11 +118,11 @@ class ProductApiController extends ApiController
   private function validationFK($id_categories, $id_shops)
   {
     if (!$this->categoryModel->getCategory($id_categories)) {
-      $this->view->response("La categoria con el id= " . $id_categories . " no existe", 400);
+      $this->view->response("La categoria con el id= " . $id_categories . " no existe", 404);
       die();
     }
     if (!$this->shopModel->get($id_shops)) { //verifico que exista la id del shop para no romper la FK
-      $this->view->response("El shop con el id= " . $id_shops . " no existe", 400);
+      $this->view->response("El shop con el id= " . $id_shops . " no existe", 404);
       die();
     }
   }
