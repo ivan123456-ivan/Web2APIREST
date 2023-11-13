@@ -87,3 +87,9 @@
 #### - **?category**: *Se debe indicar el número correspondiente a un ID de una categoría existente en la base de datos.*
 
 ------------
+
+### *Métodos de Paginado:*
+
+#### - **?page**: *Se debe especificar el número de pagina que se desea obtener (**empezando por la 0**). Cabe aclarar que este método no es compatible para combinar con los otros métodos. En caso de indicar caracteres **no numéricos** se devolverá la lista completa de los productos sin aplicar el paginado.*
+
+#### - **?limit**: *Se puede detallar un cierto número el cuál representa el límite de los resultados que se desea obtener. **Este límite por defecto es 5**.*

@@ -31,13 +31,25 @@ class ProductApiController extends ApiController
 
   public function getAll($params = [])
   {
+    $page = (isset($_GET["page"]) && is_numeric($_GET["page"])) ? (int) $_GET["page"] : -1;
+    $limit = (!empty($_GET["limit"])) ? (int) $_GET["limit"] : 5;
     $sort_by = (!empty($_GET["sort_by"])) ? $_GET["sort_by"] : "";
     $order = (!empty($_GET["order"]) && $_GET["order"] == 1) ? "ASC" : "DESC";
     $category = (!empty($_GET["category"]) && isset($_GET["category"]) && $this->categoryModel->getCategory($_GET["category"])) ? (int)$_GET["category"] : 0;
+    $offset = ($page !== -1) ? $page * $limit : -1;
 
     if ($sort_by == "" && !$category) {
-      $products = $this->model->getAll();
-      $this->view->response($products, 200);
+      if ($offset !== -1) { // verifico que se haya establecido un offset
+        if (!is_integer($page) || !is_integer($limit)) {
+          $this->view->response("Error en especificaciones de parámetros.", 404);
+          die();
+        }
+        $products = $this->model->getPage($limit, $offset);
+        $this->view->response($products, 200);
+      } else {
+        $products = $this->model->getAll();
+        $this->view->response($products, 200);
+      }
     } else if ($sort_by !== "" && $category) {
       $this->getAllByCategoryAndOrder($sort_by, $order, $category);
     } else if ($sort_by == "" && $category) {

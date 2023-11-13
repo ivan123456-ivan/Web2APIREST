@@ -16,6 +16,14 @@ class ProductApiModel extends ApiModel
                     return $query->fetch(PDO::FETCH_OBJ);
           }
 
+          public function getPage($limit, $offset)
+          {
+                    $query = $this->db->prepare("SELECT * FROM products LIMIT $limit OFFSET $offset");
+                    $query->execute();
+
+                    return $query->fetchAll(PDO::FETCH_OBJ);
+          }
+
           public function getAllByCategoryAndOrder($sort_by, $order, $category)
           {
                     $query = $this->db->prepare("SELECT * FROM products WHERE id_categories = ? ORDER BY $sort_by $order");
